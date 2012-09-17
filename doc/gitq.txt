@@ -1,0 +1,186 @@
+*gitq.txt*	Execute git command via quickrun
+
+Version: 0.0.1
+Author: yomi <yomi322@gmail.com>
+License: MIT License
+
+==============================================================================
+CONTENTS					*gitq-contents*
+
+INTRODUCTION			|gitq-introduction|
+COMMAND				|gitq-command|
+QUICKRUN MODULE			|gitq-quickrun-module|
+CONFIGURATION			|gitq-config|
+ISSUES				|gitq-issues|
+CHANGELOG			|gitq-changelog|
+
+
+
+==============================================================================
+INTRODUCTION					*gitq-introduction*
+
+*gitq* is a Vim plugin to execute a git command in Vim by using |quickrun|
+for its backend. It provides |:Gitq| command, which can be used almost the
+same way as the original git command like
+>
+	:Gitq add foo.vim
+	:Gitq commit
+	:Gitq diff master
+<
+A command is passed to |quickrun| and processed, so you can easily customize
+how to run the command or display the result. See |gitq-config| for settings.
+
+
+Requirements:
+- git      (http://git-scm.com/)
+- quickrun (https://github.com/thinca/vim-quickrun)
+
+Latest Version:
+https://github.com/yomi322/vim-gitq
+
+
+
+==============================================================================
+COMMAND						*gitq-command*
+
+						*:Gitq*
+:Gitq {cmd} [args]
+	Run an arbitrary git command like
+>
+	:!git {cmd} [args]
+<
+	The arguments are executed via |quickrun|. See |gitq-config| to
+	customize how to run the command.
+
+
+
+==============================================================================
+QUICKRUN MODULE					*gitq-quickrun-module*
+
+Module settings are done by |g:gitq_config|. Unlike |:QuickRun|, it is not
+possible to set modules by |:Gitq| command options.
+
+Here are brief descriptions about some |quickrun-module|s. Take care that not
+all of the modules are avaiable. Some of the modules not listed below may be
+avaiable.
+
+Options of each of the modules are not shown, so see the corresponding
+section.
+
+
+RUNNER						*gitq-quickrun-module/runner*
+
+Runner is used to run a given command. See |quickrun-module-runner| for
+more details. Some of avaiable modules are shown.
+
+	system	(|quickrun-module-runner/system|)
+		run by |system()|
+
+	shell	(|quickrun-module-runner/shell|)
+		run by |:!| (default)
+
+	vimproc	(|quickrun-module-runner/vimproc|)
+		run by |vimproc#system()| if avaiable
+
+Default runner is set to "shell", which is different from |quickrun|
+
+
+OUTPUTTER				*gitq-quickrun-module/outputter*
+
+Outputter is used to display the result of a given command. See
+|quickrun-module-outputter| for more detals. Some of avaiable modules are
+shown.
+
+	buffer	(|quickrun-module-outputter/buffer|)
+		output to a quickrun buffer (default)
+
+	message	(|quickrun-module-outputter/message|)
+		output to |messages|
+
+	multi	(|quickrun-module-outputter/multi|)
+		output to multiple outputters at the same time
+
+	error	(|quickrun-module-outputter/error|)
+		switch outputters depending on the result of a command
+
+	null	(|quickrun-module-outputter/null|)
+		no output
+
+
+HOOK						*gitq-quickrun-module/hook*
+
+Hook is used to do something additional at a certain point. See
+|quickrun-module-hook| for more details.
+
+
+
+==============================================================================
+CONFIGURATION					*gitq-config*
+						*g:gitq_config*
+
+|:Gitq| changes its behavior according to |g:gitq_config|, which is a
+Dictionary variable similar to |g:quickrun_config|. The key is one of git
+commands such as add, commit, and log. The value is a Dictionary, whose key
+is one of names or options of |quickrun-module|s and value is a value
+corresponding to the key.
+
+Example:
+>
+	let g:gitq_config = {
+	\ 'add': {
+	\   'runner': 'system',
+	\   'outputter': 'buffer',
+	\   'outputter/buffer/filetype': 'git',
+	\   },
+	\ }
+<
+The special key "_" is used for all the commands, but it has a lower
+priority. This is often used for default settings.
+
+When the key is given as a git command with its option like "add/p" or
+"add/patch", the priority is higher than the key without any option.
+
+
+For example, g:gitq_config is given like this
+>
+	let g:gitq_config = {
+	\ '_':         { 'runner': 'system', },
+	\ 'add':       { 'runner': 'vimproc', },
+	\ 'add/p':     { 'runner': 'shell', },
+	\ }
+<
+and you run the below command
+>
+	:Gitq add -p
+<
+Then, "runner" is "shell", "vimproc", "system" in order of higher priority
+and is set to "shell".
+
+For another example, you run the below command with the same g:gitq_config
+as before.
+>
+	:Gitq add -u
+<
+In this case, because the "-p" option is not given and then the key of
+"add/p" is ignored, "runner" is "vimproc", "system" in order and is set to
+"vimproc".
+
+
+
+==============================================================================
+ISSUES						*gitq-issues*
+
+- Currently, there is no known issue.
+
+
+
+==============================================================================
+CHANGELOG					*gitq-changelog*
+
+0.0.1	2012-09-17
+	  - Initial version.
+
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
