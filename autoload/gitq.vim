@@ -13,7 +13,9 @@ let g:quickrun_config.gitq = {
 function! gitq#run(args)
   let gitcmdline = 'git ' . a:args
   let args = split(a:args)
-  let [gitcmd, gitopts] = [args[0], args[1:]]
+  let gitcmd  = args[0]
+  let gitopts = map(filter(args[1:], 'v:val =~# "^-"'),
+  \                 'matchstr(v:val, "--\\zs\\S\\+\\ze=\\S\\+\\|--\\zs\\S\\+\\|-\\zs\\a")')
   let qropts = s:get_quickrun_options(gitcmd, gitopts)
   execute 'QuickRun -type gitq ' . join(qropts) . ' -src "' . escape(gitcmdline, '"') . '"'
 endfunction
