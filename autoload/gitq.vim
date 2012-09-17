@@ -11,7 +11,11 @@ let g:quickrun_config.gitq = {
 
 
 function! gitq#run(args)
-  echo a:args
+  let gitcmdline = 'git ' . a:args
+  let args = split(a:args)
+  let [gitcmd, gitopts] = [args[0], args[1:]]
+  let qropts = s:get_quickrun_options(gitcmd, gitopts)
+  execute 'QuickRun -type gitq ' . join(qropts) . ' -src "' . escape(gitcmdline, '"') . '"'
 endfunction
 
 
