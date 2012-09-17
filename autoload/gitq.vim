@@ -18,6 +18,16 @@ function! gitq#run(args)
   execute 'QuickRun -type gitq ' . join(qropts) . ' -src "' . escape(gitcmdline, '"') . '"'
 endfunction
 
+function! s:get_quickrun_options(gitcmd, gitopts)
+  let config = {}
+  for conf in ['g:gitq_config[a:gitcmd]', 'g:gitq_config["_"]']
+    if exists(conf)
+      call extend(config, eval(conf), 'keep')
+    endif
+  endfor
+  return values(map(config, '"-" . v:key . " " . v:val'))
+endfunction
+
 
 function! gitq#complete(arglead, cmdline, cursorpos)
   return []
