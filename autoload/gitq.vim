@@ -6,6 +6,7 @@ if !exists('g:quickrun_config')
 endif
 let g:quickrun_config.gitq = {
 \   'command': 'sh',
+\   'runner': 'shell',
 \   'outputter/buffer/name': '*gitq*',
 \ }
 
