@@ -1,15 +1,6 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-if !exists('g:quickrun_config')
-  let g:quickrun_config = {}
-endif
-let g:quickrun_config.gitq = {
-\   'command': 'sh',
-\   'runner': 'shell',
-\   'outputter/buffer/name': '*gitq*',
-\ }
-
 
 function! gitq#run(args)
   let gitcmdline = 'git ' . a:args
@@ -18,6 +9,7 @@ function! gitq#run(args)
   let gitopts = map(filter(args[1:], 'v:val =~# "^-"'),
   \                 'matchstr(v:val, "--\\zs\\S\\+\\ze=\\S\\+\\|--\\zs\\S\\+\\|-\\zs\\a")')
   let qropts = s:get_quickrun_options(gitcmd, gitopts)
+  call s:check_quickrun_config()
   execute 'QuickRun -type gitq ' . join(qropts) . ' -src "' . escape(gitcmdline, '"') . '"'
 endfunction
 
@@ -30,6 +22,20 @@ function! s:get_quickrun_options(gitcmd, gitopts)
     endif
   endfor
   return values(map(config, '"-" . v:key . " " . v:val'))
+endfunction
+
+function! s:check_quickrun_config()
+  if !exists('g:quickrun_config')
+    let g:quickrun_config = {}
+  endif
+  if !exists('g:quickrun_config.gitq')
+    let g:quickrun_config.gitq = {
+    \ 'command': 'sh',
+    \ 'runner': 'shell',
+    \ 'outputter/buffer/name': '*gitq*',
+    \ 'outputter/buffer/filetype': 'git',
+    \ }
+  endif
 endfunction
 
 
