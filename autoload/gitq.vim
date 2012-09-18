@@ -38,6 +38,28 @@ function! gitq#run(args)
   execute 'QuickRun -type gitq' join(qropts) '-src "' escape(gitcmdline, '"') '"'
 endfunction
 
+function! s:parse_args(args)
+  let ret = { 'gitcmd': '', }
+  let words = a:args
+  let idx = 0
+  while idx <= len(words) && ret.gitcmd ==# ''
+    if words[idx] =~# '^--git-dir=\S\+'
+      let ret.gitdir = matchstr(words[idx], '--git-dir=\zs\S\+')
+    elseif words[idx] ==# '--bare'
+      let ret.gitdir = '.'
+    elseif words[idx] ==# '--help'
+      let ret.gitcmd = 'help'
+    elseif words[idx] ==# '-c'
+      let idx += 1
+    elseif words[idx] !~# '^-'
+      let ret.gitcmd = words[idx]
+    endif
+    let idx += 1
+  endwhile
+  let ret.gitcmdopts = s:parse_gitcmd_options(words[idx :])
+  return ret
+endfunction
+
 function! s:parse_gitcmd_options(args)
   let opts = []
   let idx_dash = index(a:args, '--')
