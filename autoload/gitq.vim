@@ -38,7 +38,7 @@ function! gitq#run(args)
   execute 'QuickRun -type gitq' join(qropts) '-src "' escape(gitcmdline, '"') '"'
 endfunction
 
-function! s:get_git_options(args)
+function! s:parse_gitcmd_options(args)
   let opts = []
   for arg in filter(a:args, 'v:val =~# "^-"')
     if arg =~# '^--[-0-9A-Za-z]\+=\S\+$\|^--[-0-9A-Za-z]\+$'
