@@ -40,11 +40,13 @@ endfunction
 
 function! s:parse_gitcmd_options(args)
   let opts = []
-  for arg in filter(a:args, 'v:val =~# "^-"')
-    if arg =~# '^--[-0-9A-Za-z]\+=\S\+$\|^--[-0-9A-Za-z]\+$'
-      call add(opts, matchstr(arg, '--\zs[-0-9A-Za-z]\+\ze=\S\+\|--\zs[-0-9A-Za-z]\+'))
-    elseif arg =~# '^-[0-9A-Za-z]\+$'
-      let opts = opts + split(matchstr(arg, '-\zs[0-9A-Za-z]\+'), '\zs')
+  let idx_dash = index(a:args, '--')
+  let words = idx_dash >= 0 ? a:args[: idx_dash] : a:args
+  for word in filter(words, 'v:val =~# "^-"')
+    if word =~# '^--[-0-9A-Za-z]\+=\S\+$\|^--[-0-9A-Za-z]\+$'
+      call add(opts, matchstr(word, '--\zs[-0-9A-Za-z]\+\ze=\S\+\|--\zs[-0-9A-Za-z]\+'))
+    elseif word =~# '^-[0-9A-Za-z]\+$'
+      let opts = opts + split(matchstr(word, '-\zs[0-9A-Za-z]\+'), '\zs')
     endif
   endfor
   return opts
