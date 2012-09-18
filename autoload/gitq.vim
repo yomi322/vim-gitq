@@ -29,13 +29,11 @@ endfunction
 
 
 function! gitq#run(args)
-  let gitcmdline = 'git ' . a:args
-  let args = split(a:args)
-  let gitcmd  = args[0]
-  let gitopts = s:get_git_options(args[1:])
-  let qropts = s:set_quickrun_options(gitcmd, gitopts)
+  let cmdline = 'git ' . a:args
+  let args = s:parse_args(split(a:args))
+  let qropts = s:set_quickrun_options(args.gitcmd, args.gitcmdopts)
   call s:set_quickrun_config()
-  execute 'QuickRun -type gitq' join(qropts) '-src "' escape(gitcmdline, '"') '"'
+  execute 'QuickRun -type gitq' join(qropts) '-src "' escape(cmdline, '"') '"'
 endfunction
 
 function! s:parse_args(args)
