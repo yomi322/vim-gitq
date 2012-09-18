@@ -6,11 +6,22 @@ function! gitq#run(args)
   let gitcmdline = 'git ' . a:args
   let args = split(a:args)
   let gitcmd  = args[0]
-  let gitopts = map(filter(args[1:], 'v:val =~# "^-"'),
-  \                 'matchstr(v:val, "--\\zs\\S\\+\\ze=\\S\\+\\|--\\zs\\S\\+\\|-\\zs\\a")')
+  let gitopts = s:get_git_options(args[1:])
   let qropts = s:get_quickrun_options(gitcmd, gitopts)
   call s:check_quickrun_config()
   execute 'QuickRun -type gitq ' . join(qropts) . ' -src "' . escape(gitcmdline, '"') . '"'
+endfunction
+
+function! s:get_git_options(args)
+  let opts = []
+  for arg in filter(a:args, 'v:val =~# "^-"')
+    if arg =~# '^--[-0-9A-Za-z]\+=\S\+$\|^--[-0-9A-Za-z]\+$'
+      call add(opts, matchstr(arg, '--\zs[-0-9A-Za-z]\+\ze=\S\+\|--\zs[-0-9A-Za-z]\+'))
+    elseif arg =~# '^-[0-9A-Za-z]\+$'
+      let opts = opts + split(matchstr(arg, '-\zs[0-9A-Za-z]\+'), '\zs')
+    endif
+  endfor
+  return opts
 endfunction
 
 function! s:get_quickrun_options(gitcmd, gitopts)
