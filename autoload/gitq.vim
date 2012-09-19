@@ -24,14 +24,14 @@ endfunction
 
 function! gitq#run(args)
   let cmdline = 'git ' . a:args
-  let args = s:parse_args(split(a:args))
+  let args = s:parse_cmdline(cmdline)
   let qropts = s:set_quickrun_options(args.gitcmd, args.gitcmdopts)
   execute 'QuickRun' join(qropts) '-src "' escape(cmdline, '"') '"'
 endfunction
 
-function! s:parse_args(args)
+function! s:parse_cmdline(cmdline)
   let ret = { 'gitcmd': '', }
-  let words = a:args
+  let words = split(a:cmdline)
   let idx = 0
   while idx <= len(words) && ret.gitcmd ==# ''
     if words[idx] =~# '^--git-dir=\S\+'
