@@ -42,7 +42,7 @@ function! s:parse_cmdline(cmdline)
       let ret.gitcmd = 'help'
     elseif words[idx] ==# '-c'
       let idx += 1
-    elseif words[idx] !~# '^-'
+    elseif words[idx] !~# '^git$\|^Gitq$\|^-'
       let ret.gitcmd = words[idx]
     endif
     let idx += 1
