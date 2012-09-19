@@ -24,27 +24,30 @@ endfunction
 
 function! gitq#run(args)
   let cmdline = 'git ' . a:args
-  let args = s:parse_cmdline(cmdline)
-  let qropts = s:set_quickrun_options(args.gitcmd, args.gitcmdopts)
+  let [gitcmd, gitcmdopts] = s:parse_cmdline(cmdline)
+  let qropts = s:set_quickrun_options(gitcmd, gitcmdopts)
   execute 'QuickRun' join(qropts) '-src "' escape(cmdline, '"') '"'
 endfunction
 
 function! s:parse_cmdline(cmdline)
-  let ret = { 'gitcmd': '', }
+  let gitcmd = ''
+  let gitcmdopts = []
   let words = split(a:cmdline)
   let idx = 0
-  while idx < len(words) && ret.gitcmd ==# ''
+  while idx < len(words) && gitcmd ==# ''
     if words[idx] ==# '-c'
       let idx += 1
     elseif words[idx] ==# '--help'
-      let ret.gitcmd = 'help'
+      let gitcmd = 'help'
     elseif words[idx] !~# '^git$\|^Gitq$\|^-'
-      let ret.gitcmd = words[idx]
+      let gitcmd = words[idx]
     endif
     let idx += 1
   endwhile
-  let ret.gitcmdopts = s:parse_gitcmd_options(words[idx :])
-  return ret
+  if gitcmd !=# ''
+    let gitcmdopts = s:parse_gitcmd_options(words[idx :])
+  endif
+  return [gitcmd, gitcmdopts]
 endfunction
 
 function! s:parse_gitcmd_options(args)
