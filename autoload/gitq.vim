@@ -33,7 +33,7 @@ function! s:parse_cmdline(cmdline)
   let ret = { 'gitcmd': '', }
   let words = split(a:cmdline)
   let idx = 0
-  while idx <= len(words) && ret.gitcmd ==# ''
+  while idx < len(words) && ret.gitcmd ==# ''
     if words[idx] =~# '^--git-dir=\S\+'
       let ret.gitdir = matchstr(words[idx], '--git-dir=\zs\S\+')
     elseif words[idx] ==# '--bare'
