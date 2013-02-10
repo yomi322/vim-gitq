@@ -29,24 +29,20 @@ function! gitq#run(args)
 endfunction
 
 function! s:parse_cmdline(cmdline)
-  let gitcmd = ''
-  let gitcmdopts = []
-  let words = split(a:cmdline)
   let idx = 0
-  while idx < len(words) && gitcmd ==# ''
-    if words[idx] ==# '-c'
+  let length = len(a:cmdline)
+  while idx < length
+    let word = a:cmdline[idx]
+    if word ==# '-c'
       let idx += 1
-    elseif words[idx] ==# '--help'
-      let gitcmd = 'help'
-    elseif words[idx] !~# '^git$\|^Gitq$\|^-'
-      let gitcmd = words[idx]
+    elseif word ==# '--help'
+      return 'help'
+    elseif word !~# '^-'
+      return word
     endif
     let idx += 1
   endwhile
-  if gitcmd !=# ''
-    let gitcmdopts = s:parse_gitcmd_options(words[idx :])
-  endif
-  return [gitcmd, gitcmdopts]
+  return ''
 endfunction
 
 
