@@ -22,10 +22,10 @@ endfunction
 
 
 function! gitq#run(args)
-  let cmdline = 'git ' . a:args
-  let [gitcmd, gitcmdopts] = s:parse_cmdline(cmdline)
-  let qropts = s:set_quickrun_options(gitcmd, gitcmdopts)
-  execute 'QuickRun' join(qropts) '-src "' escape(cmdline, '"') '"'
+  let cmdline = split(a:args)
+  let gitcmd = s:parse_cmdline(cmdline)
+  let qropts = s:set_quickrun_options(gitcmd)
+  execute 'QuickRun' join(qropts) '-src "' escape(join(['git'] + cmdline), '"') '"'
 endfunction
 
 function! s:parse_cmdline(cmdline)
