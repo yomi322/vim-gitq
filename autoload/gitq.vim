@@ -47,7 +47,13 @@ endfunction
 
 
 function! gitq#complete(arglead, cmdline, cursorpos)
-  return []
+  let cmdline = split(a:cmdline)[1:] + (a:cmdline =~# '\s$' ? [''] : [])
+  try
+    let comp = map(gitcomplete#complete(a:arglead, cmdline), 'v:val.word')
+    return filter(comp, 'stridx(v:val, a:arglead) == 0')
+  catch
+    return []
+  endtry
 endfunction
 
 
