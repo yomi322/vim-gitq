@@ -10,10 +10,9 @@ let s:quickrun_config = {
 \ 'outputter/buffer/filetype': 'git',
 \ }
 
-function! s:set_quickrun_options(gitcmd, gitopts)
+function! s:set_quickrun_options(gitcmd)
   let config = {}
-  for conf in map(a:gitopts, '"g:gitq_config[a:gitcmd . \"/" . v:val . "\"]"')
-  \           + ['g:gitq_config[a:gitcmd]', 'g:gitq_config["_"]', 's:quickrun_config']
+  for conf in ['g:gitq_config[a:gitcmd]', 'g:gitq_config["_"]', 's:quickrun_config']
     if exists(conf)
       call extend(config, eval(conf), 'keep')
     endif
