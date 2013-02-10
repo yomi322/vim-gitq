@@ -5,7 +5,7 @@ set cpo&vim
 let s:quickrun_config = {
 \ 'type': 'gitq',
 \ 'command': 'sh',
-\ 'runner': 'shell',
+\ 'runner': 'system',
 \ 'outputter/buffer/name': '*gitq*',
 \ 'outputter/buffer/filetype': 'git',
 \ }
